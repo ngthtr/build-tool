@@ -1,6 +1,6 @@
-#include "Handler.hpp"
+#include "../inc/Handler.hpp"
 
-int main()
+int main(int argc, char const *argv[])
 {
     Handler handler;
     handler.func();

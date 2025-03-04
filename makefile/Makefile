@@ -1,30 +1,36 @@
 CXX = g++
-CXXFLAGS = -Wall -std=c++11 -g -I.
+CXX_STANDARD = c++17
+CXXFLAGS = -Wall -Wextra -Wpedantic -std=$(CXX_STANDARD) -g -I $(DIR_INC)
 
-DIR_OUT = out/
-DIR_SRC = src/
-DIR_INC = inc/
-# find all file .cpp in DIR_SRC
+DIR_BUILD = build
+DIR_SRC = src
+DIR_INC = inc
+# all file .cpp in DIR_SRC
 SRCS = $(wildcard $(DIR_SRC)/*.cpp)
-# find all file .cpp in DIR_INC
-INCS = $(wildcard $(DIR_INC)/*.hpp)
 TARGET = main
 
-# create OBJS as a list of file .o
-OBJS = $(patsubst $(DIR_SRC)/%.cpp, $(DIR_OUT)/%.o, $(SRCS))
+# create OBJECTS as a list of file .o
+OBJECTS = $(patsubst $(DIR_SRC)/%.cpp, $(DIR_BUILD)/%.o, $(SRCS))
 
 # Compile .cpp to .o
-$(DIR_OUT)/%.o: src/%.cpp $(INCS)
-	@mkdir -p $(DIR_OUT)
+$(DIR_BUILD)/%.o: $(DIR_SRC)/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Make target
-all: $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS)
+all: prepare build
+	@echo "build successful"
 
-# Clean target
+# create folder build if it's not exist
+prepare:
+	@mkdir -p $(DIR_BUILD)
+
+# build source code
+build: $(OBJECTS)
+	$(CXX) $(CXXFLAGS) -o $(DIR_BUILD)/$(TARGET) $(OBJECTS)
+
+# Clean build
 clean:
-	rm -rf $(DIR_OUT) $(TARGET) main.dSYM
+	rm -rf $(DIR_BUILD)
 
-# make for 'all' and 'clean' are not real files. Mark them as lable for command
+# Make for target is lable for command, not real files
 .PHONY: all clean
